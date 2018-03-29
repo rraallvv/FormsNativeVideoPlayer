@@ -17,12 +17,17 @@ using Android.Content.Res;
 
 namespace FormsNativeVideoPlayer.Droid
 {
-	public class VideoPlayer_CustomRenderer : ViewRenderer
+	public class VideoPlayer_CustomRenderer : ViewRenderer, ISurfaceHolderCallback
 	{
 		//Create views globally so they can be referenced in OnLayout override
 		VideoView videoView;
 		Android.Widget.Button playButton;
 		global::Android.Views.View view;
+
+        //Needed to play videos in the assets folder
+        Android.Media.MediaPlayer player;
+
+        bool playFromAssets = true;
 
 		int width, height;
 
@@ -45,10 +50,26 @@ namespace FormsNativeVideoPlayer.Droid
 
 			//Give some color to the play button, but not important
 			playButton.SetBackgroundColor (Android.Graphics.Color.Aqua);
-			//uri for a free video
-			var uri = Android.Net.Uri.Parse ("https://www.dropbox.com/s/hi45psyy0wq9560/PigsInAPolka1943.mp4?dl=1");
-			//Set the videoView with our uri, this could also be a local video on device
-			videoView.SetVideoURI (uri);
+
+            if (playFromAssets)
+            {
+                //relative path to video in Assets folder
+                var filePath = "SampleVideo.mp4";
+                ISurfaceHolder holder = videoView.Holder;
+                holder.AddCallback (this);
+                player = new  Android.Media.MediaPlayer ();
+                AssetFileDescriptor afd = Context.Assets.OpenFd (filePath);
+                player.SetDataSource (afd.FileDescriptor, afd.StartOffset, afd.Length);
+            }
+            else
+            {
+                //uri for a free video
+                //var uri = Android.Net.Uri.Parse ("https://www.dropbox.com/s/hi45psyy0wq9560/PigsInAPolka1943.mp4?dl=1");
+                var uri = Android.Net.Uri.Parse("android.resource://" + Forms.Context.PackageName + "/" + Resource.Raw.SampleVideo);
+                //Set the videoView with our uri, this could also be a local video on device
+                videoView.SetVideoURI (uri);
+            }
+            
 			//Assign click event on our play button to play the video
 			playButton.Click += PlayVideo;
 		}      
@@ -97,10 +118,40 @@ namespace FormsNativeVideoPlayer.Droid
 
 		void PlayVideo (object sender, EventArgs arg){
 			//Start that video!!!
-			var activity = Context as Activity; 
-			activity.RunOnUiThread (() => {
-				videoView.Start ();
-			});
+            var activity = Context as Activity; 
+            activity.RunOnUiThread (() =>
+            {
+                if (playFromAssets)
+                {
+                    player.Prepare();
+                    player.Start();
+                }
+                else
+                {
+                    videoView.Start();
+                }
+            });
 		}
+        
+        public void SurfaceCreated(ISurfaceHolder holder)
+        {
+            Console.WriteLine("SurfaceCreated");
+            player.SetDisplay(holder);
+        }
+        
+        public void SurfaceDestroyed(ISurfaceHolder holder)
+        {
+            Console.WriteLine("SurfaceDestroyed");
+        }
+        
+        public void SurfaceChanged(ISurfaceHolder holder, Android.Graphics.Format format, int w, int h)
+        {
+            Console.WriteLine("SurfaceChanged");
+        }
+        
+        public void OnPrepared(Android.Media.MediaPlayer player)
+        {
+
+        }
 	}
 }

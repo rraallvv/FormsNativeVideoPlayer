@@ -29,9 +29,10 @@ namespace FormsNativeVideoPlayer.iOS
 		{
 			base.OnElementChanged (e);
 
-			//Get the video
-			//bubble up to the AVPlayerLayer
-			var url = new NSUrl ("http://www.androidbegin.com/tutorial/AndroidCommercial.3gp");
+            //Get the video
+            //bubble up to the AVPlayerLayer
+            //var url = new NSUrl ("http://www.androidbegin.com/tutorial/AndroidCommercial.3gp");
+            var url = new NSUrl ("file://" + NSBundle.MainBundle.PathForResource("SampleVideo", "mp4"));
 			_asset = AVAsset.FromUrl (url);
 
 			_playerItem = new AVPlayerItem (_asset);
