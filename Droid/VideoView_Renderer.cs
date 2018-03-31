@@ -13,14 +13,14 @@ using Android.Widget;
 using Android.OS;
 using Android.Content.Res;
 
-[assembly: ExportRenderer(typeof(ContentView), typeof(VideoPlayer_CustomRenderer))]
+[assembly: ExportRenderer(typeof(FormsNativeVideoPlayer.VideoView), typeof(VideoView_Renderer))]
 
 namespace FormsNativeVideoPlayer.Droid
 {
-	public class VideoPlayer_CustomRenderer : ViewRenderer, ISurfaceHolderCallback
+	public class VideoView_Renderer : ViewRenderer, ISurfaceHolderCallback
 	{
 		//Create views globally so they can be referenced in OnLayout override
-		VideoView videoView;
+		Android.Widget.VideoView videoView;
 		Android.Widget.Button playButton;
 		global::Android.Views.View view;
 
@@ -45,7 +45,7 @@ namespace FormsNativeVideoPlayer.Droid
 			AddView (view);
 
 			//Get and set Views
-			videoView = FindViewById<VideoView> (Resource.Id.SampleVideoView);
+			videoView = FindViewById<Android.Widget.VideoView> (Resource.Id.SampleVideoView);
 			playButton = FindViewById<Android.Widget.Button> (Resource.Id.PlayVideoButton);
 
 			//Give some color to the play button, but not important

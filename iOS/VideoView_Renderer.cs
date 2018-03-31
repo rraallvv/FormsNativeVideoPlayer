@@ -11,11 +11,11 @@ using UIKit;
 using CoreGraphics;
 using AVKit;
 
-[assembly: ExportRenderer(typeof(ContentView), typeof(VideoPlayer_CustomRenderer))]
+[assembly: ExportRenderer(typeof(FormsNativeVideoPlayer.VideoView), typeof(VideoView_Renderer))]
 
 namespace FormsNativeVideoPlayer.iOS
 {
-	public class VideoPlayer_CustomRenderer : ViewRenderer
+	public class VideoView_Renderer : ViewRenderer
 	{
 		//globally declare variables
 		AVAsset _asset;
@@ -51,6 +51,7 @@ namespace FormsNativeVideoPlayer.iOS
 				_player.Play();
 			};
 		}
+        
 		public override void LayoutSubviews ()
 		{
 			base.LayoutSubviews ();
